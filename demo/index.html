@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>s</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../dist/style.css">
+</head>
+<body>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="../dist/library.umd.js"></script>
+
+<div id="app">
+    <button @click="random">Show Notifications</button>
+    <button @click="showError">Show Error</button>
+    <button @click="showRandomInContext">Show Random In Same Context</button>
+</div>
+
+<script>
+    const {createApp} = Vue
+
+    let app = createApp({
+        setup() {
+            return {
+                notifications: notificationCenter.useNotificationStore().state()
+            }
+        },
+        methods: {
+            showError() {
+                this.$notificationCenter.error("Just a message")
+            },
+            random() {
+                setTimeout(() => {
+                    this.$notificationCenter.open("Just a message")
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.error("Just a message")
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.success("Just a message")
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.info("Just a message")
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.warning("Just a message")
+                }, Math.random() * 1000)
+            },
+            showRandomInContext() {
+                setTimeout(() => {
+                    this.$notificationCenter.error("Just a message", {context: "aContext"})
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.success("Just a message", {context: "aContext"})
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.info("Just a message", {context: "aContext"})
+                }, Math.random() * 1000)
+                setTimeout(() => {
+                    this.$notificationCenter.warning("Just a message", {context: "aContext"})
+                }, Math.random() * 1000)
+            }
+        }
+    });
+    app.use(notificationCenter.NotificationcenterPlugin)
+    app.mount('#app')
+</script>
+</body>
+</html>

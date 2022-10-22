@@ -1,0 +1,57 @@
+
+@keyframes flyOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+.v-toast--fly-out {
+  animation-name: flyOut;
+}
+
+@keyframes flyIn {
+  from {
+    opacity: 0;
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.v-toast--fly-in {
+  animation-name: flyIn;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, -20%, 0);
+  }
+}
+
+.v-toast--fade-out {
+  animation-name: fadeOut;
+}
+
+/**
+ * Vue Transitions
+ */
+
+.fly-enter-active,
+.fly-leave-active {
+  transition: all $animationSpeed ease-out;
+}
+
+.fly-enter,
+.fly-leave-to {
+  opacity: 0;
+}

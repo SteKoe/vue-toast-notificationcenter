@@ -1,0 +1,264 @@
+@function pow($base, $exponents) {
+  $raised: 1;
+
+  @for $i from 1 through $exponents {
+    $raised: $raised * $base;
+  }
+
+  @return $raised;
+}
+
+$toastWidth: 344px;
+
+.v-toast {
+  position: fixed;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2em;
+  overflow: hidden;
+  z-index: 1052;
+  pointer-events: none;
+  font-size: .9em;
+
+  &-container {
+    position: fixed;
+    padding: 2em;
+    top: 0;
+    right: 0;
+  }
+
+  &__item {
+    box-sizing: border-box;
+    z-index: 10;
+    position: inherit;
+    display: inline-flex;
+    align-items: center;
+    animation-duration: $animationSpeed;
+    animation-timing-function: ease-out;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2), 0 0 6px rgba(0, 0, 0, 0.05);
+    margin: 0 0 12px 0;
+    padding-right: 16px;
+    padding-left: 16px;
+    border-radius: 12px;
+    border-color: $border-color;
+    border-width: 1px;
+    border-style: solid;
+    background-color: $background-color;
+    color: $color;
+    pointer-events: auto;
+    width: $toastWidth;
+    cursor: pointer;
+
+    backdrop-filter: blur(10px);
+
+    transform: translateY(0px) scaleX(100%);
+    transition: all .2s;
+
+    &.v-toast__item {
+      &--top-right {
+        align-self: flex-end;
+      }
+    }
+
+    $maxItems: 3;
+
+    &:nth-child(n+#{$maxItems}) {
+      display: none;
+    }
+
+    @for $n from 2 through $maxItems {
+      &:nth-child(#{$n}) {
+        $factor: calc((100 - pow(3, $n - 1)) / 100);
+        $innerWidth: $toastWidth * $factor;
+
+        animation-duration: 0ms;
+        display: inherit;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        z-index: 0 - $n;
+        width: $innerWidth;
+        transform: translateY((($n - 1) * 8) + px);
+
+        .v-toast__dismiss {
+          display: none;
+        }
+      }
+    }
+
+    &:hover {
+      .v-toast__dismiss {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__text {
+    margin: 12px 0;
+    line-height: 18px;
+    flex-shrink: 1;
+    word-wrap: break-word;
+    overflow-x: hidden;
+  }
+
+  &__title {
+    font-weight: 700;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__message {
+    padding: 0;
+    margin: 0;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    margin: 16px 12px 16px 0;
+    overflow: hidden;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center center;
+  }
+
+  &__dismiss {
+    position: absolute;
+
+    display: flex;
+    align-items: center;
+
+    height: 16px;
+
+    top: -5px;
+    left: -5px;
+    border-radius: 32px;
+    line-height: 18px;
+    font-size: .6em;
+    text-align: center;
+
+    border: 1px solid $border-color;
+    background-color: $background-color;
+    color: $color;
+
+    opacity: 0;
+    transition: opacity $animationSpeed;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &-icon {
+      height: 16px;
+      width: 16px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 512'%3E%3C!--! Font Awesome Pro 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --%3E%3Cpath d='M310.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L160 210.7 54.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L114.7 256 9.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 301.3 265.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L205.3 256 310.6 150.6z'/%3E%3C/svg%3E");
+      background-size: 40%;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &-label  {
+      display: none;
+    }
+
+    &--group {
+      transition: padding $animationSpeed;
+      padding: 0;
+
+      &:hover {
+        height: 22px;
+        padding: 0 8px;
+        transform: translateY(-4px);
+
+        .v-toast__dismiss-icon {
+          display: none;
+        }
+        .v-toast__dismiss-label {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &__context-container {
+    position: relative;
+    display: flex;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1052;
+    pointer-events: none;
+    font-size: 0.9em;
+    flex-direction: column;
+
+    &:not(:empty) {
+      margin-bottom: 1em;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    padding: 0;
+    position: fixed !important;
+  }
+
+  &__item--default {
+    background-color: #F9FAFB;
+    border-color: #D1D5DB;
+    color: #374151;
+
+    .v-toast__icon {
+      display: none;
+    }
+  }
+
+  &__item--error {
+    background-color: #FDF2F2;
+    border-color: #F8B4B4;
+    color: #771D1D;
+
+    .v-toast__icon {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23771D1D' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7z'/%3E%3C/svg%3E");
+      background-size: 70%;
+    }
+  }
+
+  &__item--success {
+    background-color: #F3FAF7;
+    border-color: #84E1BC;
+    color: #066C4E;
+
+    .v-toast__icon {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23066C4E' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z'/%3E%3C/svg%3E");
+      background-size: 65%;
+    }
+  }
+
+  &__item--info {
+    background-color: #EBF5FF;
+    border-color: #A4CAFE;
+    color: #233876;
+
+    .v-toast__icon {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23233876' viewBox='0 0 16 16'%3E%3Cpath d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/%3E%3C/svg%3E");
+      background-size: 65%;
+    }
+  }
+
+  &__item--warning {
+    background-color: #FDFDEA;
+    border-color: #FACA15;
+    color: #8E4B0F;
+
+    .v-toast__icon {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238E4B0F' viewBox='0 0 16 16'%3E%3Cpath d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8 4a.905.905 0 0 0-.9.995l.35 3.507a.552.552 0 0 0 1.1 0l.35-3.507A.905.905 0 0 0 8 4zm.002 6a1 1 0 1 0 0 2 1 1 0 0 0 0-2z'/%3E%3C/svg%3E");
+      background-size: 65%;
+    }
+  }
+}
