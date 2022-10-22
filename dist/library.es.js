@@ -1,4 +1,4 @@
-import { h, render, defineComponent, ref, watchEffect, openBlock, createBlock, Transition, withCtx, withDirectives, createElementVNode, normalizeClass, createElementBlock, toDisplayString, createCommentVNode, vShow } from "vue";
+import { h, render, defineComponent, ref, watchEffect, openBlock, createBlock, Transition, withCtx, withDirectives, createElementVNode, normalizeClass, toDisplayString, createElementBlock, createCommentVNode, vShow } from "vue";
 var index = "";
 function removeElement(el) {
   var _a;
@@ -135,6 +135,10 @@ const _sfc_main = defineComponent({
       type: String,
       default: "default"
     },
+    labelCloseAll: {
+      type: String,
+      default: "Close All"
+    },
     duration: {
       type: Number,
       default: 3e3
@@ -255,15 +259,11 @@ const _sfc_main = defineComponent({
   }
 });
 const _hoisted_1 = /* @__PURE__ */ createElementVNode("div", { class: "v-toast__dismiss-icon" }, null, -1);
-const _hoisted_2 = /* @__PURE__ */ createElementVNode("div", { class: "v-toast__dismiss-label" }, "Alle schlie\xDFen", -1);
-const _hoisted_3 = [
-  _hoisted_1,
-  _hoisted_2
-];
-const _hoisted_4 = /* @__PURE__ */ createElementVNode("div", { class: "v-toast__icon" }, null, -1);
-const _hoisted_5 = { class: "v-toast__text" };
-const _hoisted_6 = ["textContent"];
-const _hoisted_7 = ["innerHTML"];
+const _hoisted_2 = ["textContent"];
+const _hoisted_3 = /* @__PURE__ */ createElementVNode("div", { class: "v-toast__icon" }, null, -1);
+const _hoisted_4 = { class: "v-toast__text" };
+const _hoisted_5 = ["textContent"];
+const _hoisted_6 = ["innerHTML"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createBlock(Transition, {
     "enter-active-class": _ctx.transition.enter,
@@ -283,18 +283,24 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         createElementVNode("div", {
           class: normalizeClass(["v-toast__dismiss", _ctx.classNames({ "v-toast__dismiss--group": _ctx.counter > 1 })]),
           onClick: _cache[0] || (_cache[0] = (...args) => _ctx.manualDismiss && _ctx.manualDismiss(...args))
-        }, _hoisted_3, 2),
-        _hoisted_4,
-        createElementVNode("div", _hoisted_5, [
+        }, [
+          _hoisted_1,
+          createElementVNode("div", {
+            class: "v-toast__dismiss-label",
+            textContent: toDisplayString(_ctx.labelCloseAll)
+          }, null, 8, _hoisted_2)
+        ], 2),
+        _hoisted_3,
+        createElementVNode("div", _hoisted_4, [
           _ctx.title ? (openBlock(), createElementBlock("p", {
             key: 0,
             class: "v-toast__title",
             textContent: toDisplayString(_ctx.title)
-          }, null, 8, _hoisted_6)) : createCommentVNode("", true),
+          }, null, 8, _hoisted_5)) : createCommentVNode("", true),
           createElementVNode("p", {
             class: "v-toast__message",
             innerHTML: _ctx.message.substring(0, 128)
-          }, null, 8, _hoisted_7)
+          }, null, 8, _hoisted_6)
         ])
       ], 34), [
         [vShow, _ctx.isActive]

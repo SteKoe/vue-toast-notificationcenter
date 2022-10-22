@@ -17,7 +17,7 @@
            :class="classNames({'v-toast__dismiss--group': counter > 1})"
            @click="manualDismiss">
         <div class="v-toast__dismiss-icon"></div>
-        <div class="v-toast__dismiss-label">Alle schließen</div>
+        <div class="v-toast__dismiss-label" v-text="labelCloseAll"></div>
       </div>
       <div class="v-toast__icon"></div>
       <div class="v-toast__text">
@@ -53,6 +53,10 @@ export default defineComponent({
     context: {
       type: String,
       default: 'default'
+    },
+    labelCloseAll: {
+      type: String,
+      default: 'Close All',
     },
     duration: {
       type: Number,

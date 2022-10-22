@@ -64,7 +64,9 @@
             }
         }
     });
-    app.use(notificationCenter.NotificationcenterPlugin)
+    app.use(notificationCenter.NotificationcenterPlugin, {
+        labelCloseAll: 'groep afwijzen'
+    })
     app.mount('#app')
 </script>
 </body>
