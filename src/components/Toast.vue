@@ -7,14 +7,11 @@
         v-show="isActive"
         role="alert"
         class="v-toast__item"
-        :class="classNames(
-              `v-toast__item--${type}`,
-              `v-toast__item--top-right`,
-          )"
+        :class="[`v-toast__item--${type}`, `v-toast__item--top-right`]"
         @mouseover="toggleTimer(true)"
         @mouseleave="toggleTimer(false)">
       <div class="v-toast__dismiss"
-           :class="classNames({'v-toast__dismiss--group': counter > 1})"
+           :class="{'v-toast__dismiss--group': counter > 1}"
            @click="manualDismiss">
         <div class="v-toast__dismiss-icon"></div>
         <div class="v-toast__dismiss-label" v-text="labelCloseAll"></div>
@@ -34,7 +31,6 @@ import {removeElement} from '../js/helpers.js';
 import Timer from "../js/timer.js";
 import eventBus from '../js/eventBus.js'
 import {useNotificationStore} from "../js/notificationCenter";
-import classNames from "classnames";
 
 export default defineComponent({
   props: {
@@ -105,7 +101,6 @@ export default defineComponent({
     eventBus.on('toast-clear-context', this.onClearContext)
   },
   methods: {
-    classNames,
     setupContainer() {
       this.parentTop = document.querySelector(`.v-toast__context-container--${this.context}`);
       if (this.parentTop) return;

@@ -62,54 +62,6 @@ function mitt(n) {
   } };
 }
 const eventBus = mitt();
-var classnames = { exports: {} };
-/*!
-	Copyright (c) 2018 Jed Watson.
-	Licensed under the MIT License (MIT), see
-	http://jedwatson.github.io/classnames
-*/
-(function(module) {
-  (function() {
-    var hasOwn = {}.hasOwnProperty;
-    function classNames2() {
-      var classes = [];
-      for (var i = 0; i < arguments.length; i++) {
-        var arg = arguments[i];
-        if (!arg)
-          continue;
-        var argType = typeof arg;
-        if (argType === "string" || argType === "number") {
-          classes.push(arg);
-        } else if (Array.isArray(arg)) {
-          if (arg.length) {
-            var inner = classNames2.apply(null, arg);
-            if (inner) {
-              classes.push(inner);
-            }
-          }
-        } else if (argType === "object") {
-          if (arg.toString !== Object.prototype.toString && !arg.toString.toString().includes("[native code]")) {
-            classes.push(arg.toString());
-            continue;
-          }
-          for (var key in arg) {
-            if (hasOwn.call(arg, key) && arg[key]) {
-              classes.push(key);
-            }
-          }
-        }
-      }
-      return classes.join(" ");
-    }
-    if (module.exports) {
-      classNames2.default = classNames2;
-      module.exports = classNames2;
-    } else {
-      window.classNames = classNames2;
-    }
-  })();
-})(classnames);
-var classNames = classnames.exports;
 var _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -184,7 +136,6 @@ const _sfc_main = defineComponent({
     eventBus.on("toast-clear-context", this.onClearContext);
   },
   methods: {
-    classNames,
     setupContainer() {
       this.parentTop = document.querySelector(`.v-toast__context-container--${this.context}`);
       if (this.parentTop)
@@ -273,15 +224,12 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       withDirectives(createElementVNode("div", {
         ref: "root",
         role: "alert",
-        class: normalizeClass(["v-toast__item", _ctx.classNames(
-          `v-toast__item--${_ctx.type}`,
-          `v-toast__item--top-right`
-        )]),
+        class: normalizeClass(["v-toast__item", [`v-toast__item--${_ctx.type}`, `v-toast__item--top-right`]]),
         onMouseover: _cache[1] || (_cache[1] = ($event) => _ctx.toggleTimer(true)),
         onMouseleave: _cache[2] || (_cache[2] = ($event) => _ctx.toggleTimer(false))
       }, [
         createElementVNode("div", {
-          class: normalizeClass(["v-toast__dismiss", _ctx.classNames({ "v-toast__dismiss--group": _ctx.counter > 1 })]),
+          class: normalizeClass(["v-toast__dismiss", { "v-toast__dismiss--group": _ctx.counter > 1 }]),
           onClick: _cache[0] || (_cache[0] = (...args) => _ctx.manualDismiss && _ctx.manualDismiss(...args))
         }, [
           _hoisted_1,

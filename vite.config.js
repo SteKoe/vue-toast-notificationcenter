@@ -8,7 +8,7 @@ module.exports = defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/index.js'),
             name: 'notificationCenter',
-            formats: ['es', 'umd'], // adding 'umd' requires globals set to every external module
+            formats: ['es', 'umd', 'cjs'], // adding 'umd' requires globals set to every external module
             fileName: (format) => `library.${format}.js`,
         },
         rollupOptions: {

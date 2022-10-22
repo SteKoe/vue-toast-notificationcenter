@@ -8,8 +8,8 @@
     "vue": "^3.2.25"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.19.4",
     "@vitejs/plugin-vue": "^2.0.0",
-    "classnames": "^2.3.2",
     "mitt": "^3.0.0",
     "rimraf": "^3.0.2",
     "vite": "^2.7.2",
@@ -20,11 +20,6 @@
     "src",
     "dist"
   ],
-  "module": "./dist/library.es.js",
-  "exports": {
-    ".": {
-      "import": "./dist/library.es.js"
-    },
-    "./dist/style.css": "./dist/style.css"
-  }
+  "main": "./dist/library.cjs.js",
+  "module": "./dist/library.es.js"
 }
