@@ -24,6 +24,7 @@ function createComponent(component, props, slots = {}) {
 }
 class Timer {
   constructor(callback, delay) {
+    this.timer = -1;
     this.startedAt = Date.now();
     this.callback = callback;
     this.delay = delay;
@@ -97,25 +98,16 @@ const _sfc_main = defineComponent({
     },
     onDismiss: {
       type: Function,
-      default: () => {
-      }
+      default: () => () => void 0
     },
     onClick: {
       type: Function,
-      default: () => {
-      }
+      default: () => void 0
     },
     pauseOnHover: {
       type: Boolean,
       default: true
     }
-  },
-  data() {
-    return {
-      isActive: false,
-      isManualDissmissed: false,
-      parentTop: null
-    };
   },
   setup(props) {
     const notificationStore = useNotificationStore();
@@ -124,9 +116,19 @@ const _sfc_main = defineComponent({
     watchEffect(() => {
       counter.value = notifications2.value.filter((c) => c.context === props.context).length;
     });
+    const root = ref(null);
+    const isActive = ref(false);
+    const isManualDismissed = ref(false);
+    const parentTop = ref(null);
+    const timer = ref(null);
     return {
       notificationStore,
-      counter
+      counter,
+      root,
+      isActive,
+      isManualDismissed,
+      parentTop,
+      timer
     };
   },
   beforeMount() {
@@ -145,24 +147,26 @@ const _sfc_main = defineComponent({
         this.parentTop.className = `v-toast__context-container v-toast__context-container--${this.context}`;
       }
       const container = document.querySelector(".v-toast-container");
-      container.appendChild(this.parentTop);
+      container == null ? void 0 : container.appendChild(this.parentTop);
     },
     showNotice() {
-      const wrapper = this.$refs.root.parentElement;
-      this.parentTop.insertAdjacentElement("beforeend", this.$refs.root);
-      removeElement(wrapper);
-      this.isActive = true;
-      if (this.duration && this.counter === 0) {
-        this.timer = new Timer(this.dismiss, this.duration);
+      const wrapper = this.root.parentElement;
+      if (this.parentTop && wrapper) {
+        this.parentTop.insertAdjacentElement("beforeend", this.root);
+        removeElement(wrapper);
+        this.isActive = true;
+        if (this.duration && this.counter === 0) {
+          this.timer = new Timer(this.dismiss, this.duration);
+        }
       }
     },
-    onClearContext(e) {
-      if (this.context === e.context && this._.uid !== e.uid) {
+    onClearContext(notification) {
+      if (this.context === notification.context && this.$.uid !== notification.uid) {
         this.removeToast();
       }
     },
     manualDismiss() {
-      this.isManualDissmissed = true;
+      this.isManualDismissed = true;
       this.dismiss();
     },
     dismiss() {
@@ -171,7 +175,7 @@ const _sfc_main = defineComponent({
       this.isActive = false;
       this.notificationStore.remove(this);
       if (this.counter > 1) {
-        eventBus.emit("toast-clear-context", { context: this.context, counter: this.counter, uid: this._.uid });
+        eventBus.emit("toast-clear-context", { context: this.context, counter: this.counter, uid: this.$.uid });
       }
       setTimeout(() => this.removeToast(), 250);
     },
@@ -180,28 +184,30 @@ const _sfc_main = defineComponent({
         this.timer.stop();
       this.isActive = false;
       this.notificationStore.remove(this);
-      this.onDismiss({
-        context: this.context,
-        severity: this.type
-      });
-      const wrapper = this.$refs.root;
+      if (this.onDismiss) {
+        this.onDismiss({
+          context: this.context,
+          severity: this.type
+        });
+      }
+      const wrapper = this.root;
       render(null, wrapper);
       removeElement(wrapper);
-      if (this.parentTop.children.length === 0) {
+      if (this.parentTop && this.parentTop.children.length === 0) {
         removeElement(this.parentTop);
       }
     },
-    toggleTimer(newVal) {
+    toggleTimer(triggerPause) {
       if (!this.pauseOnHover || !this.timer)
         return;
-      newVal ? this.timer.pause() : this.timer.resume();
+      triggerPause ? this.timer.pause() : this.timer.resume();
     }
   },
   computed: {
     transition() {
       return {
         enter: "v-toast--fly-in",
-        leave: this.isManualDissmissed ? "v-toast--fade-out" : "v-toast--fly-out"
+        leave: this.isManualDismissed ? "v-toast--fade-out" : "v-toast--fly-out"
       };
     }
   },
@@ -305,30 +311,14 @@ const useToast = (globalProps = {}) => {
     }
   };
 };
-const Severity = Object.freeze({
-  ERROR: "error",
-  SUCCESS: "success",
-  INFO: "info",
-  WARNING: "warning",
-  DEFAULT: "default"
-});
 const notifications = ref([]);
-const Store = {
-  add(context, severity) {
+const NotificationStore = {
+  add(uid, context, severity) {
     notifications.value.push({
+      uid,
       context,
       severity
     });
-  },
-  sub(ctx) {
-    const state = this.get(ctx);
-    return state.value--;
-  },
-  get(ctx) {
-    return notifications.value.filter((c) => c.context === ctx);
-  },
-  count(context) {
-    return this.get(context).length;
   },
   state() {
     return notifications;
@@ -338,7 +328,7 @@ const Store = {
   }
 };
 const useNotificationStore = () => {
-  return Store;
+  return NotificationStore;
 };
 const useNotificationCenter = (globalProps) => {
   const $toast = useToast();
@@ -350,48 +340,45 @@ const useNotificationCenter = (globalProps) => {
         options = {};
       }
       const defaultProps = {
-        type: Severity.DEFAULT,
-        context: Severity.DEFAULT,
+        type: "default",
+        context: "default",
         message
       };
       const props = Object.assign({}, defaultProps, globalProps, options);
-      const instance = $toast.open(props);
-      notifications.value.push({
-        uid: instance.uid,
-        dismiss: instance.ctx.dismiss,
-        context: props.context,
-        type: props.type
-      });
-      instance.ctx.showNotice();
+      const toastInstance = $toast.open(props);
+      if (toastInstance) {
+        NotificationStore.add(toastInstance.uid, props.context, props.type);
+        toastInstance.ctx.showNotice();
+      }
     },
     error(message, opts) {
       const options = Object.assign({}, {
-        type: Severity.ERROR,
-        context: Severity.ERROR,
+        type: "error",
+        context: "error",
         message
       }, opts);
       this.open(options);
     },
     success(message, opts) {
       const options = Object.assign({}, {
-        type: Severity.SUCCESS,
-        context: Severity.SUCCESS,
+        type: "success",
+        context: "success",
         message
       }, opts);
       this.open(options);
     },
     info(message, opts) {
       const options = Object.assign({}, {
-        type: Severity.INFO,
-        context: Severity.INFO,
+        type: "info",
+        context: "info",
         message
       }, opts);
       this.open(options);
     },
     warning(message, opts) {
       const options = Object.assign({}, {
-        type: Severity.WARNING,
-        context: Severity.WARNING,
+        type: "warning",
+        context: "warning",
         message
       }, opts);
       this.open(options);
@@ -401,11 +388,11 @@ const useNotificationCenter = (globalProps) => {
     }
   };
 };
-const NotificationcenterPlugin = {
-  install: (app, options = {}) => {
+const NotificationCenterPlugin = {
+  install(app, options = {}) {
     let instance = useNotificationCenter(options);
     app.config.globalProperties.$notificationCenter = instance;
     app.provide("$notificationCenter", instance);
   }
 };
-export { NotificationcenterPlugin, NotificationcenterPlugin as default, useNotificationCenter, useNotificationStore };
+export { NotificationCenterPlugin, NotificationCenterPlugin as default, useNotificationCenter, useNotificationStore };

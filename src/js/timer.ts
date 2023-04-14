@@ -1,6 +1,11 @@
 // https://stackoverflow.com/a/3969760
 export default class Timer {
-    constructor(callback, delay) {
+    private startedAt: number;
+    private callback: Function;
+    private delay: number;
+    private timer: number = -1;
+
+    constructor(callback: Function, delay: number) {
         this.startedAt = Date.now();
         this.callback = callback;
         this.delay = delay;

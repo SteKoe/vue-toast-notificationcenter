@@ -12,7 +12,9 @@
     "@vitejs/plugin-vue": "^2.0.0",
     "mitt": "^3.0.0",
     "rimraf": "^3.0.2",
+    "typescript": "^5.0.4",
     "vite": "^2.7.2",
+    "vite-plugin-dts": "^2.2.0",
     "vue": "^3.2.25",
     "vue-tsc": "^0.29.8"
   },

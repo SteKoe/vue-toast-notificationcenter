@@ -1,6 +1,6 @@
-import {h, render} from 'vue';
+import {Component, ComponentInternalInstance, h, render} from 'vue';
 
-export function removeElement(el) {
+export function removeElement(el: HTMLElement) {
     if (typeof el.remove !== 'undefined') {
         el.remove()
     } else {
@@ -8,10 +8,10 @@ export function removeElement(el) {
     }
 }
 
-export function createComponent(component, props, slots = {}) {
+export function createComponent(component: Component, props: any, slots = {}): ComponentInternalInstance | null {
     let parentContainer = document.querySelector('.v-toast-container');
 
-    if(!parentContainer) {
+    if (!parentContainer) {
         parentContainer = document.createElement('div');
         parentContainer.classList.add('v-toast-container');
         document.body.appendChild(parentContainer)

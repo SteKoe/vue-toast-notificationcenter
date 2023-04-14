@@ -1,10 +1,10 @@
-import ToastComponent from '../components/Toast.vue'
-import {createComponent} from './helpers';
-import eventBus from './eventBus.js';
+import ToastComponent from '@/components/Toast.vue'
+import {createComponent} from '@/js/helpers';
+import eventBus from '@/js/eventBus';
 
 export const useToast = (globalProps = {}) => {
     return {
-        open(options) {
+        open(options: any) {
             let message = null;
             if (typeof options === 'string') message = options;
 
@@ -13,37 +13,36 @@ export const useToast = (globalProps = {}) => {
             };
 
             const propsData = Object.assign({}, defaultProps, globalProps, options);
-
             return createComponent(ToastComponent, propsData);
         },
         clear() {
             eventBus.emit('toast-clear')
         },
-        success(message, options = {}) {
+        success(message: string, options: any = {}) {
             return this.open(Object.assign({}, {
                 message,
                 type: 'success'
             }, options))
         },
-        error(message, options = {}) {
+        error(message: string, options: any = {}) {
             return this.open(Object.assign({}, {
                 message,
                 type: 'error'
             }, options))
         },
-        info(message, options = {}) {
+        info(message: string, options: any = {}) {
             return this.open(Object.assign({}, {
                 message,
                 type: 'info'
             }, options))
         },
-        warning(message, options = {}) {
+        warning(message: string, options: any = {}) {
             return this.open(Object.assign({}, {
                 message,
                 type: 'warning'
             }, options))
         },
-        default(message, options = {}) {
+        default(message: string, options: any = {}) {
             return this.open(Object.assign({}, {
                 message,
                 type: 'default'
