@@ -9,7 +9,7 @@ export const useNotificationCenter = (globalProps: any) => {
     const $toast = useToast();
 
     return {
-        open(options: any) {
+        open(options?: any) {
             let message = null;
             if (typeof options === 'string') {
                 message = options;
@@ -32,7 +32,7 @@ export const useNotificationCenter = (globalProps: any) => {
                 toastInstance.ctx.showNotice();
             }
         },
-        error(message: string, opts: any) {
+        error(message: string, opts?: any) {
             const options = Object.assign({}, {
                 type: "error",
                 context: "error",
@@ -40,7 +40,7 @@ export const useNotificationCenter = (globalProps: any) => {
             }, opts)
             this.open(options)
         },
-        success(message: string, opts: any) {
+        success(message: string, opts?: any) {
             const options = Object.assign({}, {
                 type: "success",
                 context: "success",
@@ -48,7 +48,7 @@ export const useNotificationCenter = (globalProps: any) => {
             }, opts)
             this.open(options)
         },
-        info(message: string, opts: any) {
+        info(message: string, opts?: any) {
             const options = Object.assign({}, {
                 type: "info",
                 context: "info",
@@ -56,7 +56,7 @@ export const useNotificationCenter = (globalProps: any) => {
             }, opts)
             this.open(options)
         },
-        warning(message: string, opts: any) {
+        warning(message: string, opts?: any) {
             const options = Object.assign({}, {
                 type: "warning",
                 context: "warning",
